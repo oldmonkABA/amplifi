@@ -18,6 +18,9 @@ def create_app() -> FastAPI:
 
     app.include_router(auth_router)
 
+    from app.modules.content.router import router as content_router
+    app.include_router(content_router)
+
     @app.get("/health")
     async def health():
         return {"status": "ok"}
