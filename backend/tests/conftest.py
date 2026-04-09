@@ -1,8 +1,7 @@
 import pytest
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-from app.models.base import Base
+from app.models import Base  # This import triggers all model registrations
 
 
 @pytest.fixture
