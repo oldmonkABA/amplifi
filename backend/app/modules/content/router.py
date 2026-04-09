@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select, func
@@ -16,6 +17,8 @@ from app.modules.content.schemas import (
     ContentGroupCreateRequest,
     ContentGroupResponse,
     ContentGenerateRequest,
+    ContentScheduleRequest,
+    ContentCalendarResponse,
 )
 from app.services.content_generator import ContentGenerator
 from app.services.llm.factory import create_llm_factory
@@ -141,6 +144,31 @@ async def generate_content(
     return _content_to_response(content)
 
 
+@router.get("/calendar", response_model=ContentCalendarResponse)
+async def get_content_calendar(
+    site_id: str = Query(...),
+    start: str = Query(...),
+    end: str = Query(...),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    # Parse datetime strings, replacing space-encoded '+' for timezone offsets
+    start_dt = datetime.fromisoformat(start.replace(" ", "+"))
+    end_dt = datetime.fromisoformat(end.replace(" ", "+"))
+    result = await db.execute(
+        select(Content)
+        .where(Content.site_id == uuid.UUID(site_id))
+        .where(Content.status.in_(["scheduled", "published"]))
+        .where(Content.scheduled_at >= start_dt)
+        .where(Content.scheduled_at <= end_dt)
+        .order_by(Content.scheduled_at.asc())
+    )
+    items = result.scalars().all()
+    return ContentCalendarResponse(
+        items=[_content_to_response(c) for c in items]
+    )
+
+
 @router.get("/{content_id}", response_model=ContentResponse)
 async def get_content(
     content_id: str,
@@ -190,6 +218,31 @@ async def reject_content(
 ):
     content = await _get_content_or_404(db, content_id)
     content.status = "rejected"
+    await db.commit()
+    await db.refresh(content)
+    return _content_to_response(content)
+
+
+@router.post("/{content_id}/schedule", response_model=ContentResponse)
+async def schedule_content(
+    content_id: str,
+    request: ContentScheduleRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    content = await _get_content_or_404(db, content_id)
+
+    # Validate schedule time is in the future
+    now = datetime.now(timezone.utc)
+    scheduled_at = request.scheduled_at
+    if scheduled_at.tzinfo is None:
+        scheduled_at = scheduled_at.replace(tzinfo=timezone.utc)
+    if scheduled_at <= now:
+        raise HTTPException(status_code=400, detail="Scheduled time must be in the future")
+
+    content.status = "scheduled"
+    content.scheduled_at = scheduled_at
+    content.target_timezone = request.target_timezone
     await db.commit()
     await db.refresh(content)
     return _content_to_response(content)

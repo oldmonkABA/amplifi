@@ -120,3 +120,12 @@ class ContentGenerateRequest(BaseModel):
                 f"Invalid platform '{v}'. Must be one of: {', '.join(VALID_PLATFORMS)}"
             )
         return v
+
+
+class ContentScheduleRequest(BaseModel):
+    scheduled_at: datetime
+    target_timezone: str | None = None
+
+
+class ContentCalendarResponse(BaseModel):
+    items: list[ContentResponse]
