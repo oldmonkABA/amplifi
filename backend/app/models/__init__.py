@@ -5,3 +5,4 @@ from app.models.content import Content, ContentGroup
 from app.models.keyword import Keyword
 from app.models.subscriber import Subscriber
 from app.models.email_campaign import EmailCampaign
+from app.models.ad import AdCampaign, Ad
