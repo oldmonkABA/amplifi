@@ -223,8 +223,9 @@ async def generate_ads(
     if not site:
         raise HTTPException(status_code=404, detail="Site not found")
 
-    # Verify campaign exists
-    await _get_campaign_or_404(db, request.campaign_id)
+    # Verify campaign exists (skip if "pending" — wizard generates before creating campaign)
+    if request.campaign_id != "pending":
+        await _get_campaign_or_404(db, request.campaign_id)
 
     site_context = {"product_name": site.name, "url": site.url}
     if site.description:
@@ -232,11 +233,11 @@ async def generate_ads(
     if site.niche:
         site_context["niche"] = site.niche
 
+    from app.config import settings as _settings
+    provider = current_user.default_llm_provider
+    api_key = current_user.openai_api_key or getattr(_settings, f"{provider}_api_key", None)
     factory = create_llm_factory()
-    llm = factory.get(
-        current_user.default_llm_provider,
-        api_key=current_user.openai_api_key,
-    )
+    llm = factory.get(provider, api_key=api_key)
     generator = AdCopyGenerator(llm=llm)
 
     variants = await generator.generate(
@@ -248,26 +249,52 @@ async def generate_ads(
         keywords=request.keywords,
     )
 
-    # Save each variant as a draft ad
+    # Save each variant as a draft ad (skip DB save if campaign_id is "pending")
     ads = []
+    is_pending = request.campaign_id == "pending"
     for v in variants:
-        ad = Ad(
-            campaign_id=uuid.UUID(request.campaign_id),
-            headline=v.get("headline", ""),
-            headline_2=v.get("headline_2"),
-            headline_3=v.get("headline_3"),
-            description=v.get("description", ""),
-            description_2=v.get("description_2"),
-            final_url=site.url,
-            status="draft",
-        )
-        db.add(ad)
-        ads.append(ad)
+        if is_pending:
+            # Return mock response without saving — wizard will create real ads later
+            from datetime import datetime, timezone
+            mock_ad = AdResponse(
+                id=str(uuid.uuid4()),
+                campaign_id="pending",
+                headline=v.get("headline", ""),
+                headline_2=v.get("headline_2"),
+                headline_3=v.get("headline_3"),
+                description=v.get("description", ""),
+                description_2=v.get("description_2"),
+                display_url=None,
+                final_url=site.url,
+                image_url=None,
+                status="draft",
+                platform_ad_id=None,
+                meta_data=None,
+                created_at=datetime.now(timezone.utc),
+                updated_at=datetime.now(timezone.utc),
+            )
+            ads.append(mock_ad)
+        else:
+            ad = Ad(
+                campaign_id=uuid.UUID(request.campaign_id),
+                headline=v.get("headline", ""),
+                headline_2=v.get("headline_2"),
+                headline_3=v.get("headline_3"),
+                description=v.get("description", ""),
+                description_2=v.get("description_2"),
+                final_url=site.url,
+                status="draft",
+            )
+            db.add(ad)
+            ads.append(ad)
 
-    await db.commit()
-    for ad in ads:
-        await db.refresh(ad)
+    if not is_pending:
+        await db.commit()
+        for ad in ads:
+            await db.refresh(ad)
 
+    if is_pending:
+        return AdGenerateResponse(ads=ads)
     return AdGenerateResponse(ads=[_ad_to_response(a) for a in ads])
 
 

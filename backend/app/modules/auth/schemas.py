@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from uuid import UUID
+
+from pydantic import BaseModel, field_serializer
 
 
 class GoogleAuthRequest(BaseModel):
@@ -11,10 +13,14 @@ class TokenResponse(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     email: str
     name: str
     avatar_url: str | None = None
     default_llm_provider: str = "openai"
 
     model_config = {"from_attributes": True}
+
+    @field_serializer("id")
+    def serialize_id(self, v: UUID) -> str:
+        return str(v)

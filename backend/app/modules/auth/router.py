@@ -46,6 +46,30 @@ async def google_auth(request: GoogleAuthRequest, db: AsyncSession = Depends(get
     return TokenResponse(access_token=token)
 
 
+@router.post("/dev-login", response_model=TokenResponse)
+async def dev_login(db: AsyncSession = Depends(get_db)):
+    """Dev-only login that bypasses Google OAuth."""
+    from app.config import settings as _settings
+    if not _settings.dev_mode:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    from app.modules.auth.dependencies import DEV_USER_ID
+    result = await db.execute(select(User).where(User.id == DEV_USER_ID))
+    user = result.scalar_one_or_none()
+    if user is None:
+        user = User(
+            id=DEV_USER_ID,
+            email="arun@cautilyacapital.com",
+            name="Arun",
+            google_id="dev-user",
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
+    return TokenResponse(access_token="dev-token")
+
+
 @router.get("/me", response_model=UserResponse)
 async def get_me(user: User = Depends(get_current_user)):
     return user

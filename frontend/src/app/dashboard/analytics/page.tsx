@@ -30,7 +30,7 @@ import type {
   TimeseriesResponse,
 } from "@/types/api";
 
-const SITE_ID = "default";
+import { DEV_SITE_ID as SITE_ID } from "@/lib/constants";
 
 export default function AnalyticsPage() {
   const [days, setDays] = useState(30);

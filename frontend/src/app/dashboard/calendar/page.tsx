@@ -19,7 +19,7 @@ import {
 } from "date-fns";
 import type { ContentCalendarResponse, ContentResponse } from "@/types/api";
 
-const SITE_ID = "default";
+import { DEV_SITE_ID as SITE_ID } from "@/lib/constants";
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());

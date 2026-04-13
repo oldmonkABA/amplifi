@@ -111,11 +111,11 @@ async def generate_content(
         site_context["niche"] = site.niche
 
     # Create LLM and generate content
+    from app.config import settings as _settings
+    provider = current_user.default_llm_provider
+    api_key = current_user.openai_api_key or getattr(_settings, f"{provider}_api_key", None)
     factory = create_llm_factory()
-    llm = factory.get(
-        current_user.default_llm_provider,
-        api_key=current_user.openai_api_key,
-    )
+    llm = factory.get(provider, api_key=api_key)
     generator = ContentGenerator(llm=llm)
 
     generated = await generator.generate(

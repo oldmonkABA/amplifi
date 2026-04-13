@@ -1,5 +1,10 @@
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
+export function getToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("amplifi_token");
+}
+
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const res = await fetch(`${BACKEND_URL}${path}`, {
     ...options,
@@ -13,6 +18,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     throw new Error(`API error: ${res.status}`);
   }
 
+  if (res.status === 204) return;
   return res.json();
 }
 

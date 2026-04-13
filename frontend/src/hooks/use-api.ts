@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { getToken } from "@/lib/api";
 
 interface UseApiResult<T> {
   data: T | null;
@@ -14,9 +14,6 @@ export function useApi<T>(
   fetcher: (token: string) => Promise<T>,
   deps: unknown[] = [],
 ): UseApiResult<T> {
-  const { data: session } = useSession();
-  const token = (session as any)?.id_token as string | undefined;
-
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +22,7 @@ export function useApi<T>(
   const refetch = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
+    const token = getToken();
     if (!token) {
       setLoading(false);
       return;
@@ -51,7 +49,7 @@ export function useApi<T>(
     return () => {
       cancelled = true;
     };
-  }, [token, refreshKey, ...deps]);
+  }, [refreshKey, ...deps]);
 
   return { data, loading, error, refetch };
 }
@@ -59,14 +57,12 @@ export function useApi<T>(
 export function useMutation<TInput, TOutput>(
   mutator: (token: string, input: TInput) => Promise<TOutput>,
 ) {
-  const { data: session } = useSession();
-  const token = (session as any)?.id_token as string | undefined;
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const execute = useCallback(
     async (input: TInput): Promise<TOutput> => {
+      const token = getToken();
       if (!token) throw new Error("Not authenticated");
       setLoading(true);
       setError(null);
@@ -80,7 +76,7 @@ export function useMutation<TInput, TOutput>(
         setLoading(false);
       }
     },
-    [token, mutator],
+    [mutator],
   );
 
   return { execute, loading, error };

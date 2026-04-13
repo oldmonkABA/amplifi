@@ -4,7 +4,8 @@ PLATFORM_CONFIGS = {
         "system_prompt": (
             "You are a social media expert specializing in Twitter/X. "
             "Write concise, engaging tweets that drive engagement. "
-            "Use relevant hashtags sparingly (1-3). Stay under 280 characters."
+            "Use relevant hashtags sparingly (1-3). Stay under 280 characters. "
+            "Do NOT use markdown formatting. Plain text only."
         ),
     },
     "linkedin": {
@@ -12,7 +13,9 @@ PLATFORM_CONFIGS = {
         "system_prompt": (
             "You are a LinkedIn content strategist. Write professional, "
             "insightful posts that establish thought leadership. Use line breaks "
-            "for readability. Include a call to action. Use relevant hashtags (3-5)."
+            "for readability. Include a call to action. Use relevant hashtags (3-5). "
+            "IMPORTANT: Do NOT use markdown formatting (no **, no ##, no bullet points with -). "
+            "LinkedIn does not render markdown. Use plain text, line breaks, and emojis for structure."
         ),
     },
     "reddit": {
@@ -168,6 +171,14 @@ class ContentGenerator:
 
         parts.append(f"Maximum length: {config['max_length']} characters")
         parts.append("")
+        # Platforms that don't support markdown
+        no_markdown = {"twitter", "linkedin", "telegram", "reddit", "quora", "producthunt"}
+        if platform in no_markdown:
+            parts.append(
+                "FORMATTING: Use plain text only. No markdown (no **, ##, -, ```). "
+                "Use line breaks and emojis for structure instead."
+            )
+
         parts.append(
             f"Write a {content_type} for {platform} about the topic above. "
             f"Match the specified tone and naturally incorporate any target keywords."

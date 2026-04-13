@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { getToken } from "@/lib/api";
 import { generateContent } from "@/lib/api/content";
 import { generateAds } from "@/lib/api/ads";
 import { createCampaign } from "@/lib/api/campaigns";
@@ -21,7 +21,7 @@ import type {
   CampaignObjective,
 } from "@/types/api";
 
-const SITE_ID = "default";
+import { DEV_SITE_ID as SITE_ID } from "@/lib/constants";
 
 const CONTENT_PLATFORMS: ContentPlatform[] = [
   "twitter", "linkedin", "blog", "reddit", "medium", "email",
@@ -40,8 +40,7 @@ interface GeneratedPiece {
 
 export default function NewCampaignPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const token = (session as any)?.id_token as string | undefined;
+  const token = getToken();
 
   const [step, setStep] = useState<WizardStep>("goal");
 
@@ -73,10 +72,11 @@ export default function NewCampaignPage() {
     setStep("generating");
     setGenerateError(null);
     const results: GeneratedPiece[] = [];
+    const errors: string[] = [];
 
-    try {
-      // Generate content for each selected platform
-      for (const platform of selectedContentPlatforms) {
+    // Generate content for each selected platform
+    for (const platform of selectedContentPlatforms) {
+      try {
         const content = await generateContent(token, {
           site_id: SITE_ID,
           platform,
@@ -85,10 +85,14 @@ export default function NewCampaignPage() {
           tone,
         });
         results.push({ type: "content", data: content, approved: false, rejected: false });
+      } catch (err: any) {
+        errors.push(`Content (${platform}): ${err.message}`);
       }
+    }
 
-      // Generate ads if ad platform selected
-      if (selectedAdPlatform) {
+    // Generate ads if ad platform selected
+    if (selectedAdPlatform) {
+      try {
         const adResult = await generateAds(token, {
           campaign_id: "pending",
           site_id: SITE_ID,
@@ -100,12 +104,19 @@ export default function NewCampaignPage() {
         for (const ad of adResult.ads) {
           results.push({ type: "ad", data: ad, approved: false, rejected: false });
         }
+      } catch (err: any) {
+        errors.push(`Ads (${selectedAdPlatform}): ${err.message}`);
       }
+    }
 
+    if (errors.length > 0) {
+      setGenerateError(errors.join("\n"));
+    }
+
+    if (results.length > 0) {
       setPieces(results);
       setStep("review");
-    } catch (err: any) {
-      setGenerateError(err.message);
+    } else {
       setStep("goal");
     }
   };
@@ -146,25 +157,19 @@ export default function NewCampaignPage() {
         daily_budget_cents: Math.round(parseFloat(budgetDollars) * 100),
       });
 
-      // Create and approve content pieces
+      // Approve existing content (already saved during generate step) and create ads
       for (const piece of approvedPieces) {
         if (piece.type === "content") {
           const c = piece.data as ContentResponse;
-          const created = await createContent(token, {
-            site_id: SITE_ID,
-            platform: c.platform,
-            content_type: c.content_type,
-            title: c.title,
-            body: c.body,
-            group_id: campaign.id,
-          });
-          await approveContent(token, created.id);
+          // Content was already created by the generate endpoint — just approve it
+          await approveContent(token, c.id);
           if (scheduleDate) {
-            await scheduleContent(token, created.id, {
+            await scheduleContent(token, c.id, {
               scheduled_at: new Date(scheduleDate).toISOString(),
             });
           }
         } else {
+          // Ads with campaign_id="pending" were NOT saved — create them now with real campaign ID
           const a = piece.data as AdResponse;
           await createAd(token, {
             campaign_id: campaign.id,

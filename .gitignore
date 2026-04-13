@@ -9,3 +9,6 @@ build/
 test.db
 node_modules/
 .next/
+amplifi_dev.db
+*.tsbuildinfo
+Screenshot*
