@@ -54,20 +54,23 @@ export default function CalendarPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Calendar</h2>
+        <h2 className="text-3xl">Calendar</h2>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="px-3 py-1 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 transition text-sm"
+            className="btn-ghost"
           >
             Prev
           </button>
-          <span className="text-sm font-medium min-w-[140px] text-center">
+          <span
+            className="text-sm font-medium min-w-[140px] text-center"
+            style={{ color: 'var(--text-primary)' }}
+          >
             {format(currentMonth, "MMMM yyyy")}
           </span>
           <button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="px-3 py-1 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 transition text-sm"
+            className="btn-ghost"
           >
             Next
           </button>
@@ -76,13 +79,20 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-7 gap-px mb-px">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="text-center text-xs text-gray-500 py-2 font-medium">
+          <div
+            key={day}
+            className="text-center text-xs py-2 font-medium"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-px bg-gray-800 border border-gray-800 rounded-lg overflow-hidden">
+      <div
+        className="card grid grid-cols-7 gap-px overflow-hidden"
+        style={{ background: 'var(--border)', padding: 0 }}
+      >
         {calendarDays.map((day) => {
           const items = getItemsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -92,18 +102,30 @@ export default function CalendarPage() {
             <button
               key={day.toISOString()}
               onClick={() => setSelectedDate(day)}
-              className={`min-h-[80px] p-2 text-left transition ${
-                isSelected
-                  ? "bg-blue-900/30"
+              className="min-h-[80px] p-2 text-left transition"
+              style={{
+                background: isSelected
+                  ? 'var(--accent-dim)'
                   : isCurrentMonth
-                    ? "bg-gray-900 hover:bg-gray-800/70"
-                    : "bg-gray-950"
-              }`}
+                    ? 'var(--bg-secondary)'
+                    : 'var(--bg-primary)',
+              }}
+              onMouseEnter={(e) => {
+                if (!isSelected) {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'var(--bg-hover)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.background = isSelected
+                  ? 'var(--accent-dim)'
+                  : isCurrentMonth
+                    ? 'var(--bg-secondary)'
+                    : 'var(--bg-primary)';
+              }}
             >
               <span
-                className={`text-xs ${
-                  isCurrentMonth ? "text-gray-300" : "text-gray-600"
-                }`}
+                className="text-xs"
+                style={{ color: isCurrentMonth ? 'var(--text-primary)' : 'var(--text-tertiary)' }}
               >
                 {format(day, "d")}
               </span>
@@ -115,19 +137,31 @@ export default function CalendarPage() {
                       className="flex items-center gap-1"
                     >
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          item.status === "published"
-                            ? "bg-blue-400"
-                            : item.status === "scheduled"
-                              ? "bg-amber-400"
-                              : "bg-gray-500"
-                        }`}
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                          background:
+                            item.status === "published"
+                              ? 'var(--accent)'
+                              : item.status === "scheduled"
+                                ? 'var(--amber)'
+                                : 'var(--text-tertiary)',
+                        }}
                       />
-                      <span className="text-[10px] text-gray-400 truncate">{item.title}</span>
+                      <span
+                        className="text-[10px] truncate"
+                        style={{ color: 'var(--text-tertiary)' }}
+                      >
+                        {item.title}
+                      </span>
                     </div>
                   ))}
                   {items.length > 3 && (
-                    <span className="text-[10px] text-gray-500">+{items.length - 3} more</span>
+                    <span
+                      className="text-[10px]"
+                      style={{ color: 'var(--text-tertiary)' }}
+                    >
+                      +{items.length - 3} more
+                    </span>
                   )}
                 </div>
               )}
@@ -142,18 +176,22 @@ export default function CalendarPage() {
             {format(selectedDate, "EEEE, MMMM d, yyyy")}
           </h3>
           {selectedItems.length === 0 ? (
-            <p className="text-sm text-gray-500">Nothing scheduled for this day.</p>
+            <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
+              Nothing scheduled for this day.
+            </p>
           ) : (
             <div className="space-y-2">
               {selectedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 bg-gray-900 border border-gray-800 rounded-lg"
+                  className="card flex items-center gap-3 p-3"
                 >
                   <PlatformIcon platform={item.platform} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{item.title}</p>
-                    <p className="text-xs text-gray-500 truncate">{item.body}</p>
+                    <p className="text-xs truncate" style={{ color: 'var(--text-tertiary)' }}>
+                      {item.body}
+                    </p>
                   </div>
                   <StatusBadge status={item.status} />
                 </div>

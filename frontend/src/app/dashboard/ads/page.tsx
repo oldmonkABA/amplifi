@@ -37,10 +37,10 @@ export default function AdsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Ads</h2>
+        <h2 className="text-3xl mb-6">Ads</h2>
         <Link
           href="/dashboard/campaigns/new"
-          className="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition"
+          className="btn-primary"
         >
           Generate Ads
         </Link>
@@ -50,7 +50,8 @@ export default function AdsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as AdStatus | "")}
-          className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-sm text-gray-300"
+          className="rounded-lg px-3 py-1.5 text-sm"
+          style={{ borderColor: 'var(--border)' }}
         >
           <option value="">All Statuses</option>
           <option value="draft">Draft</option>
@@ -61,17 +62,17 @@ export default function AdsPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500 text-sm">Loading ads...</p>
+        <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Loading ads...</p>
       ) : !data?.items.length ? (
         <EmptyState
           title="No ads found"
           description="Generate ads through a campaign."
         />
       ) : (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+          <table className="data-table w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-800 text-left text-gray-400">
+              <tr className="text-left" style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>
                 <th className="px-4 py-3 font-medium">Headline</th>
                 <th className="px-4 py-3 font-medium">Description</th>
                 <th className="px-4 py-3 font-medium">URL</th>
@@ -81,10 +82,10 @@ export default function AdsPage() {
             </thead>
             <tbody>
               {data.items.map((ad) => (
-                <tr key={ad.id} className="border-b border-gray-800 last:border-0 hover:bg-gray-800/50">
-                  <td className="px-4 py-3 font-medium">{ad.headline}</td>
-                  <td className="px-4 py-3 text-gray-400 max-w-xs truncate">{ad.description}</td>
-                  <td className="px-4 py-3 text-blue-400 text-xs">{ad.display_url || ad.final_url}</td>
+                <tr key={ad.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td className="px-4 py-3 font-medium" style={{ color: 'var(--text-primary)' }}>{ad.headline}</td>
+                  <td className="px-4 py-3 max-w-xs truncate" style={{ color: 'var(--text-secondary)' }}>{ad.description}</td>
+                  <td className="px-4 py-3 text-xs" style={{ color: 'var(--text-tertiary)' }}>{ad.display_url || ad.final_url}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={ad.status} />
                   </td>
@@ -93,13 +94,15 @@ export default function AdsPage() {
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleApprove(ad.id)}
-                          className="text-xs px-2 py-1 rounded bg-green-900 hover:bg-green-800 text-green-300 transition"
+                          className="text-xs px-2 py-1 rounded transition"
+                          style={{ background: 'var(--green-dim)', color: 'var(--green)' }}
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleReject(ad.id)}
-                          className="text-xs px-2 py-1 rounded bg-red-900 hover:bg-red-800 text-red-300 transition"
+                          className="text-xs px-2 py-1 rounded transition"
+                          style={{ background: 'var(--red-dim)', color: 'var(--red)' }}
                         >
                           Reject
                         </button>

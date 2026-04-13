@@ -30,29 +30,23 @@ export default function DashboardPage() {
   const handleReject = async (id: string) => { await rejectMut.execute(id); refetchDrafts(); };
 
   const now = new Date();
-  const dateStr = now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+  const dateStr = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
   return (
     <div>
-      {/* Hero */}
+      {/* Header */}
       <div className="mb-10 animate-fade-up">
+        <p className="label mb-2" style={{ color: 'var(--accent)' }}>Cautilya Capital</p>
         <div className="flex items-end justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-400/60 mb-2">Welcome back</p>
-            <h2 className="text-5xl font-bold tracking-tight leading-[1.1]">
-              Command<br />
-              <span className="text-gradient">Center</span>
-            </h2>
-          </div>
-          <div className="text-right pb-1">
-            <p className="text-xs font-bold uppercase tracking-[0.15em] text-white/20 mb-1">Cautilya Capital</p>
-            <p className="text-base text-white/40 font-medium">{dateStr}</p>
-          </div>
+          <h2 className="text-5xl">
+            Dashboard
+          </h2>
+          <p className="text-base pb-1" style={{ color: 'var(--text-tertiary)' }}>{dateStr}</p>
         </div>
       </div>
 
       {/* Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10 stagger">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10 stagger">
         <MetricCard
           label="Campaigns"
           value={overviewLoading ? "\u2014" : overview?.total_campaigns ?? 0}
@@ -77,48 +71,44 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Recent Campaigns */}
-        <div className="lg:col-span-7 animate-fade-up" style={{ animationDelay: '200ms' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Campaigns */}
+        <div className="lg:col-span-3 animate-fade-up" style={{ animationDelay: '150ms' }}>
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-xl font-bold tracking-tight">Recent Campaigns</h3>
-            <Link href="/dashboard/campaigns" className="text-sm text-amber-400/60 hover:text-amber-400 font-semibold transition-colors">
+            <h3 className="text-2xl">Campaigns</h3>
+            <Link href="/dashboard/campaigns" className="text-sm font-semibold transition-colors" style={{ color: 'var(--accent)' }}>
               View all &rarr;
             </Link>
           </div>
           {campaignsLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="glass-card rounded-2xl p-4 animate-shimmer h-[72px]" />
+                <div key={i} className="card rounded-2xl p-5 animate-shimmer h-[72px]" />
               ))}
             </div>
           ) : !campaigns?.items.length ? (
             <EmptyState
               title="No campaigns yet"
               description="Create your first campaign to start driving traffic."
-              action={
-                <Link href="/dashboard/campaigns/new" className="btn-primary">
-                  New Campaign
-                </Link>
-              }
+              action={<Link href="/dashboard/campaigns/new" className="btn-primary">New Campaign</Link>}
             />
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {campaigns.items.map((c) => (
                 <Link
                   key={c.id}
                   href={`/dashboard/campaigns/${c.id}`}
-                  className="flex items-center gap-4 p-5 glass-card accent-card rounded-2xl group"
+                  className="card card-interactive rounded-2xl p-5 flex items-center gap-4"
                 >
                   <PlatformIcon platform={c.platform} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-semibold truncate tracking-tight group-hover:text-amber-400 transition-colors duration-300">{c.name}</p>
-                    <p className="text-sm text-white/25 font-medium mt-0.5">
+                    <p className="text-[15px] font-semibold truncate">{c.name}</p>
+                    <p className="text-sm mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
                       ${(c.daily_budget_cents / 100).toFixed(0)}/day &middot; {c.objective}
                     </p>
                   </div>
                   <StatusBadge status={c.status} />
-                  <svg className="w-5 h-5 text-white/10 group-hover:text-white/30 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-tertiary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -127,40 +117,39 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Pending Approvals */}
-        <div className="lg:col-span-5 animate-fade-up" style={{ animationDelay: '400ms' }}>
-          <h3 className="text-xl font-bold tracking-tight mb-5">Pending Approval</h3>
+        {/* Pending */}
+        <div className="lg:col-span-2 animate-fade-up" style={{ animationDelay: '300ms' }}>
+          <h3 className="text-2xl mb-5">Pending Approval</h3>
           {draftsLoading ? (
             <div className="space-y-3">
               {[1, 2].map((i) => (
-                <div key={i} className="glass-card rounded-2xl p-4 animate-shimmer h-[120px]" />
+                <div key={i} className="card rounded-2xl p-5 animate-shimmer h-[140px]" />
               ))}
             </div>
           ) : !drafts?.items.length ? (
-            <EmptyState
-              title="All clear"
-              description="Nothing waiting for your approval."
-            />
+            <EmptyState title="All clear" description="Nothing waiting for your review." />
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {drafts.items.map((item) => (
-                <div key={item.id} className="glass-card rounded-2xl p-5">
+                <div key={item.id} className="card rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-3">
                     <PlatformIcon platform={item.platform} />
                     <StatusBadge status={item.status} />
                   </div>
-                  <h4 className="text-base font-semibold mb-1.5 tracking-tight">{item.title}</h4>
-                  <p className="text-sm text-white/25 line-clamp-2 leading-relaxed mb-4">{item.body}</p>
+                  <h4 className="text-[15px] font-semibold mb-1">{item.title}</h4>
+                  <p className="text-sm line-clamp-2 leading-relaxed mb-4" style={{ color: 'var(--text-tertiary)' }}>{item.body}</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleApprove(item.id)}
-                      className="text-sm px-5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-semibold transition-colors"
+                      className="text-sm px-4 py-1.5 rounded-lg font-semibold transition-colors"
+                      style={{ background: 'var(--green-dim)', color: 'var(--green)' }}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleReject(item.id)}
-                      className="text-sm px-5 py-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] text-white/30 font-semibold transition-colors"
+                      className="text-sm px-4 py-1.5 rounded-lg font-semibold transition-colors"
+                      style={{ background: 'var(--red-dim)', color: 'var(--red)' }}
                     >
                       Reject
                     </button>

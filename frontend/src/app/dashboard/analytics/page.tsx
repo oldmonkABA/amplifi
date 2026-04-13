@@ -81,11 +81,11 @@ export default function AnalyticsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Analytics</h2>
+        <h2 className="text-3xl">Analytics</h2>
         <select
           value={days}
           onChange={(e) => setDays(Number(e.target.value))}
-          className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-sm text-gray-300"
+          className="rounded-lg px-3 py-1.5 text-sm"
         >
           <option value={7}>Last 7 days</option>
           <option value={30}>Last 30 days</option>
@@ -115,63 +115,63 @@ export default function AnalyticsPage() {
         />
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 mb-6">
-        <h3 className="text-sm font-medium text-gray-400 mb-4">Content Published Over Time</h3>
+      <div className="card p-4 mb-6">
+        <h3 className="label text-sm font-medium mb-4">Content Published Over Time</h3>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" tick={{ fill: "#9CA3AF", fontSize: 12 }} />
-              <YAxis tick={{ fill: "#9CA3AF", fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="date" tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} />
+              <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "1px solid #374151",
+                  backgroundColor: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
                   borderRadius: "8px",
-                  color: "#F9FAFB",
+                  color: "var(--text-primary)",
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke="#3B82F6"
+                stroke="var(--accent)"
                 strokeWidth={2}
-                dot={{ fill: "#3B82F6", r: 3 }}
+                dot={{ fill: "var(--accent)", r: 3 }}
               />
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-gray-500 text-sm text-center py-8">No data for this period.</p>
+          <p className="text-sm text-center py-8" style={{ color: "var(--text-tertiary)" }}>No data for this period.</p>
         )}
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 mb-6">
-        <h3 className="text-sm font-medium text-gray-400 mb-4">Content by Platform</h3>
+      <div className="card p-4 mb-6">
+        <h3 className="label text-sm font-medium mb-4">Content by Platform</h3>
         {platformData.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={platformData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="platform" tick={{ fill: "#9CA3AF", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#9CA3AF", fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="platform" tick={{ fill: "var(--text-tertiary)", fontSize: 11 }} />
+              <YAxis tick={{ fill: "var(--text-tertiary)", fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "1px solid #374151",
+                  backgroundColor: "var(--bg-elevated)",
+                  border: "1px solid var(--border)",
                   borderRadius: "8px",
-                  color: "#F9FAFB",
+                  color: "var(--text-primary)",
                 }}
               />
-              <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="var(--accent)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-gray-500 text-sm text-center py-8">No platform data yet.</p>
+          <p className="text-sm text-center py-8" style={{ color: "var(--text-tertiary)" }}>No platform data yet.</p>
         )}
       </div>
 
       {emailStats && emailStats.total_campaigns > 0 && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">Email Performance</h3>
+        <div className="card p-4">
+          <h3 className="label text-sm font-medium mb-3">Email Performance</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <MetricCard label="Campaigns" value={emailStats.total_campaigns} />
             <MetricCard label="Total Sent" value={emailStats.total_sent} />

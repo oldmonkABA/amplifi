@@ -249,12 +249,35 @@ async def generate_ads(
         keywords=request.keywords,
     )
 
+    # Generate ad images for Facebook ads
+    image_urls: list[str] = []
+    if request.platform == "facebook_ads":
+        try:
+            from app.services.image_generator import ImageGenerator
+            openai_key = current_user.openai_api_key or _settings.openai_api_key
+            if openai_key:
+                img_gen = ImageGenerator(api_key=openai_key)
+                img_prompt = ImageGenerator.build_ad_image_prompt(
+                    topic=request.topic,
+                    platform=request.platform,
+                    site_name=site.name,
+                    tone=request.tone,
+                )
+                # Generate one image per variant (DALL-E 3 only supports n=1)
+                for _ in range(min(request.num_variants, 3)):
+                    urls = await img_gen.generate(prompt=img_prompt, n=1)
+                    image_urls.extend(urls)
+        except Exception as e:
+            # Image generation is optional — don't fail the whole request
+            import traceback
+            traceback.print_exc()
+
     # Save each variant as a draft ad (skip DB save if campaign_id is "pending")
     ads = []
     is_pending = request.campaign_id == "pending"
-    for v in variants:
+    for idx, v in enumerate(variants):
+        img_url = image_urls[idx] if idx < len(image_urls) else None
         if is_pending:
-            # Return mock response without saving — wizard will create real ads later
             from datetime import datetime, timezone
             mock_ad = AdResponse(
                 id=str(uuid.uuid4()),
@@ -266,7 +289,7 @@ async def generate_ads(
                 description_2=v.get("description_2"),
                 display_url=None,
                 final_url=site.url,
-                image_url=None,
+                image_url=img_url,
                 status="draft",
                 platform_ad_id=None,
                 meta_data=None,
@@ -283,6 +306,7 @@ async def generate_ads(
                 description=v.get("description", ""),
                 description_2=v.get("description_2"),
                 final_url=site.url,
+                image_url=img_url,
                 status="draft",
             )
             db.add(ad)

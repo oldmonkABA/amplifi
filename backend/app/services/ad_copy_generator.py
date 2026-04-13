@@ -17,13 +17,19 @@ AD_PLATFORM_CONFIGS = {
     },
     "facebook_ads": {
         "headline_max": 40,
-        "description_max": 125,
+        "description_max": 500,
         "num_headlines": 1,
         "num_descriptions": 1,
         "system_prompt": (
-            "You are a Facebook Ads copywriter. Write scroll-stopping ad copy. "
-            "Headlines must be under 40 characters. Descriptions under 125 characters. "
-            "Focus on emotional hooks, social proof, and clear CTAs. "
+            "You are a Facebook/Meta Ads copywriter creating high-converting social ads. "
+            "Write compelling ad copy with these components:\n"
+            "- headline: A punchy, scroll-stopping headline (under 40 characters)\n"
+            "- description: The PRIMARY TEXT — this is the main ad body. Write 3-5 sentences "
+            "(100-200 words) that hook the reader with a pain point or question, explain the value, "
+            "include social proof or statistics if relevant, and end with a clear CTA. "
+            "Use line breaks for readability. This should feel like a persuasive social media post, "
+            "not a tiny tagline.\n"
+            "- description_2: A shorter link description (1-2 sentences, under 100 characters)\n"
             "Return ONLY a JSON array — no markdown fences, no commentary."
         ),
     },
@@ -81,8 +87,14 @@ class AdCopyGenerator:
         parts.append(f"Platform: {platform}")
         parts.append(f"Topic: {topic}")
         parts.append(f"Tone: {tone}")
-        parts.append(f"Headline max length: {config['headline_max']} characters")
-        parts.append(f"Description max length: {config['description_max']} characters")
+
+        if platform == "facebook_ads":
+            parts.append(f"Headline max length: {config['headline_max']} characters")
+            parts.append(f"Primary text (description): 100-200 words, persuasive, multi-paragraph")
+            parts.append(f"Link description (description_2): under 100 characters")
+        else:
+            parts.append(f"Headline max length: {config['headline_max']} characters")
+            parts.append(f"Description max length: {config['description_max']} characters")
 
         if keywords:
             parts.append(f"Target keywords: {', '.join(keywords)}")

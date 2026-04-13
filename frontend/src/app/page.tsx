@@ -21,46 +21,40 @@ export default function Home() {
   };
 
   return (
-    <main className="mesh-bg grain grid-lines flex min-h-screen flex-col items-center justify-center relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(217,160,40,0.08) 0%, transparent 60%)' }} />
+    <main className="flex min-h-screen flex-col items-center justify-center relative overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+      {/* Background orbs */}
+      <div className="absolute top-[20%] left-[15%] w-[400px] h-[400px] rounded-full animate-float pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(34, 211, 187, 0.06) 0%, transparent 70%)' }} />
+      <div className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] rounded-full animate-float pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(96, 165, 250, 0.04) 0%, transparent 70%)', animationDelay: '3s' }} />
+      <div className="absolute top-[60%] left-[60%] w-[250px] h-[250px] rounded-full animate-float pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(167, 139, 250, 0.04) 0%, transparent 70%)', animationDelay: '5s' }} />
 
       <div className="relative z-10 flex flex-col items-center animate-fade-up">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 flex items-center justify-center mb-10 shadow-2xl shadow-amber-500/30 animate-float">
-          <span className="text-3xl font-black text-black">A</span>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-2xl" style={{ background: 'var(--accent)', boxShadow: '0 8px 32px var(--accent-glow)' }}>
+          <span className="text-2xl font-black" style={{ color: 'var(--bg-primary)' }}>A</span>
         </div>
 
-        <h1 className="text-7xl font-bold tracking-tighter mb-4 text-gradient">
+        <h1 className="text-7xl mb-3">
           Amplifi
         </h1>
-        <p className="text-white/25 mb-16 text-lg font-medium tracking-wide max-w-sm text-center leading-relaxed">
-          AI-powered marketing automation for modern finance
+        <p className="text-lg mb-14" style={{ color: 'var(--text-tertiary)' }}>
+          Marketing automation for modern finance
         </p>
 
         <button
           onClick={handleDevLogin}
           disabled={loading}
-          className="group flex items-center gap-3 bg-white text-black px-8 py-4 rounded-2xl font-bold text-[15px] transition-all duration-500 shadow-[0_8px_32px_rgba(255,255,255,0.1)] hover:shadow-[0_16px_48px_rgba(255,255,255,0.15)] hover:scale-105 disabled:opacity-50"
+          className="btn-primary text-base px-10 py-4 rounded-2xl disabled:opacity-50"
         >
           {loading ? (
-            <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'var(--bg-primary)', borderTopColor: 'transparent' }} />
           ) : (
-            <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           )}
           {loading ? "Connecting..." : "Enter Dashboard"}
-          <svg className="w-4 h-4 text-black/30 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
         </button>
 
-        <div className="mt-16 flex items-center gap-3">
-          <div className="w-8 h-px bg-white/10" />
-          <p className="text-[10px] text-white/15 font-bold tracking-[0.3em] uppercase">
-            Cautilya Capital
-          </p>
-          <div className="w-8 h-px bg-white/10" />
-        </div>
+        <p className="mt-14 label">Cautilya Capital</p>
       </div>
     </main>
   );

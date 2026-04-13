@@ -184,56 +184,60 @@ function AdModal({
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-5 overflow-y-auto max-h-[60vh]">
+          {/* Ad image */}
+          {ad.image_url && !editing && (
+            <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border)' }}>
+              <img src={ad.image_url} alt="Ad creative" className="w-full h-auto" />
+            </div>
+          )}
+
           {editing ? (
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-white/20 uppercase tracking-wider block mb-2">Headline</label>
+                <label className="label block mb-2">Headline</label>
                 <input
                   type="text"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-base font-semibold focus:border-amber-400/40"
+                  className="w-full"
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-white/20 uppercase tracking-wider block mb-2">Description</label>
+                <label className="label block mb-2">Primary Text</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-base text-white/60 leading-relaxed resize-y focus:border-amber-400/40"
+                  rows={6}
+                  className="w-full"
                 />
               </div>
             </div>
           ) : (
             <>
-              <div className="rounded-2xl border border-white/[0.06] p-5 bg-white/[0.02]">
-                <p className="text-xs text-white/20 font-semibold uppercase tracking-wider mb-3">Headline</p>
+              <div className="card rounded-2xl p-5">
+                <p className="label mb-3">Headline</p>
                 <h3 className="text-xl font-bold tracking-tight mb-1">{ad.headline}</h3>
-                {ad.headline_2 && <h4 className="text-lg font-semibold text-white/70 mb-1">{ad.headline_2}</h4>}
-                {ad.headline_3 && <h4 className="text-base font-medium text-white/50">{ad.headline_3}</h4>}
+                {ad.headline_2 && <h4 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>{ad.headline_2}</h4>}
+                {ad.headline_3 && <h4 className="text-base font-medium" style={{ color: 'var(--text-tertiary)' }}>{ad.headline_3}</h4>}
               </div>
 
-              <div className="rounded-2xl border border-white/[0.06] p-5 bg-white/[0.02]">
-                <p className="text-xs text-white/20 font-semibold uppercase tracking-wider mb-3">Description</p>
-                <p className="text-base text-white/60 leading-relaxed">{ad.description}</p>
+              <div className="card rounded-2xl p-5">
+                <p className="label mb-3">Primary Text</p>
+                <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-secondary)' }}>{ad.description}</p>
                 {ad.description_2 && (
-                  <p className="text-base text-white/40 leading-relaxed mt-2">{ad.description_2}</p>
+                  <>
+                    <p className="label mt-4 mb-2">Link Description</p>
+                    <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>{ad.description_2}</p>
+                  </>
                 )}
               </div>
 
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-6 text-sm">
                 <div>
-                  <p className="text-xs text-white/20 font-semibold uppercase tracking-wider mb-1">Final URL</p>
-                  <p className="text-amber-400/70 font-medium">{ad.final_url}</p>
+                  <p className="label mb-1">Final URL</p>
+                  <p className="font-medium" style={{ color: 'var(--accent)' }}>{ad.final_url}</p>
                 </div>
-                {ad.display_url && (
-                  <div>
-                    <p className="text-xs text-white/20 font-semibold uppercase tracking-wider mb-1">Display URL</p>
-                    <p className="text-amber-400/70 font-medium">{ad.display_url}</p>
-                  </div>
-                )}
               </div>
             </>
           )}
@@ -449,18 +453,20 @@ export default function CampaignDetailPage() {
                 <div
                   key={ad.id}
                   onClick={() => setSelectedAd(ad)}
-                  className="glass-card rounded-2xl p-5 cursor-pointer group hover:scale-[1.01] transition-all duration-300"
+                  className="card card-interactive rounded-2xl overflow-hidden"
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-bold uppercase tracking-widest text-white/20">Ad</span>
-                    <StatusBadge status={ad.status} />
-                  </div>
-                  <h4 className="font-bold text-base mb-1.5 line-clamp-1 tracking-tight group-hover:text-amber-400 transition-colors">{ad.headline}</h4>
-                  <p className="text-sm text-white/25 line-clamp-2 leading-relaxed mb-1">{ad.description}</p>
-                  {ad.final_url && (
-                    <p className="text-xs text-amber-400/40 mb-3 font-medium truncate">{ad.final_url}</p>
+                  {ad.image_url && (
+                    <img src={ad.image_url} alt="Ad creative" className="w-full h-40 object-cover" />
                   )}
-                  <span className="text-xs text-white/15 font-medium">Click to view / edit</span>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="label">Ad</span>
+                      <StatusBadge status={ad.status} />
+                    </div>
+                    <h4 className="font-semibold text-base mb-1.5 line-clamp-1">{ad.headline}</h4>
+                    <p className="text-sm line-clamp-2 leading-relaxed mb-1" style={{ color: 'var(--text-tertiary)' }}>{ad.description}</p>
+                    <p className="text-xs mt-2 font-medium" style={{ color: 'var(--text-tertiary)' }}>Click to view</p>
+                  </div>
                 </div>
               ))}
             </div>

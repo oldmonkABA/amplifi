@@ -194,24 +194,29 @@ export default function NewCampaignPage() {
 
   return (
     <div className="max-w-3xl">
-      <h2 className="text-2xl font-semibold mb-6">New Campaign</h2>
+      <h2 className="text-3xl mb-6">New Campaign</h2>
 
       {/* Progress bar */}
       <div className="flex gap-2 mb-8">
         {(["goal", "generating", "review", "schedule"] as WizardStep[]).map((s, i) => (
           <div
             key={s}
-            className={`h-1 flex-1 rounded ${
-              (["goal", "generating", "review", "schedule"] as WizardStep[]).indexOf(step) >= i
-                ? "bg-blue-500"
-                : "bg-gray-800"
-            }`}
+            className="h-1 flex-1 rounded"
+            style={{
+              background:
+                (["goal", "generating", "review", "schedule"] as WizardStep[]).indexOf(step) >= i
+                  ? "var(--accent)"
+                  : "var(--border)",
+            }}
           />
         ))}
       </div>
 
       {generateError && (
-        <div className="bg-red-900/50 border border-red-800 rounded-lg p-3 mb-4 text-sm text-red-300">
+        <div
+          className="rounded-lg p-3 mb-4 text-sm"
+          style={{ background: "var(--red-dim)", border: "1px solid var(--red)", color: "var(--red)" }}
+        >
           {generateError}
         </div>
       )}
@@ -220,33 +225,33 @@ export default function NewCampaignPage() {
       {step === "goal" && (
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-1">Campaign Name</label>
+            <label className="label block mb-2">Campaign Name</label>
             <input
               type="text"
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
               placeholder="e.g., Q2 Investment Guide Launch"
-              className="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+              className="w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Topic / Goal</label>
+            <label className="label block mb-2">Topic / Goal</label>
             <textarea
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="What do you want to promote? e.g., New blog post about tax-saving investment strategies"
               rows={3}
-              className="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+              className="w-full rounded-lg px-3 py-2 text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Tone</label>
+            <label className="label block mb-2">Tone</label>
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+              className="rounded-lg px-3 py-2 text-sm"
             >
               <option value="professional">Professional</option>
               <option value="casual">Casual</option>
@@ -257,17 +262,18 @@ export default function NewCampaignPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Content Platforms</label>
+            <label className="label block mb-2">Content Platforms</label>
             <div className="flex flex-wrap gap-2">
               {CONTENT_PLATFORMS.map((p) => (
                 <button
                   key={p}
                   onClick={() => toggleContentPlatform(p)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition ${
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition"
+                  style={
                     selectedContentPlatforms.includes(p)
-                      ? "border-blue-500 bg-blue-900/30 text-blue-300"
-                      : "border-gray-800 text-gray-400 hover:border-gray-700"
-                  }`}
+                      ? { borderColor: "var(--accent)", background: "var(--accent-dim)", color: "var(--accent)" }
+                      : { borderColor: "var(--border)", color: "var(--text-secondary)" }
+                  }
                 >
                   <PlatformIcon platform={p} />
                   <span className="capitalize">{p}</span>
@@ -277,17 +283,18 @@ export default function NewCampaignPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Ad Platform (optional)</label>
+            <label className="label block mb-2">Ad Platform (optional)</label>
             <div className="flex gap-2">
               {AD_PLATFORMS.map((p) => (
                 <button
                   key={p}
                   onClick={() => setSelectedAdPlatform(selectedAdPlatform === p ? "" : p)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition ${
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition"
+                  style={
                     selectedAdPlatform === p
-                      ? "border-blue-500 bg-blue-900/30 text-blue-300"
-                      : "border-gray-800 text-gray-400 hover:border-gray-700"
-                  }`}
+                      ? { borderColor: "var(--accent)", background: "var(--accent-dim)", color: "var(--accent)" }
+                      : { borderColor: "var(--border)", color: "var(--text-secondary)" }
+                  }
                 >
                   <PlatformIcon platform={p} />
                   <span>{p === "google_ads" ? "Google Ads" : "Facebook Ads"}</span>
@@ -299,11 +306,11 @@ export default function NewCampaignPage() {
           {selectedAdPlatform && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Objective</label>
+                <label className="label block mb-2">Objective</label>
                 <select
                   value={objective}
                   onChange={(e) => setObjective(e.target.value as CampaignObjective)}
-                  className="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+                  className="w-full rounded-lg px-3 py-2 text-sm"
                 >
                   <option value="traffic">Traffic</option>
                   <option value="conversions">Conversions</option>
@@ -312,14 +319,14 @@ export default function NewCampaignPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Daily Budget ($)</label>
+                <label className="label block mb-2">Daily Budget ($)</label>
                 <input
                   type="number"
                   value={budgetDollars}
                   onChange={(e) => setBudgetDollars(e.target.value)}
                   min="1"
                   step="1"
-                  className="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+                  className="w-full rounded-lg px-3 py-2 text-sm"
                 />
               </div>
             </div>
@@ -328,7 +335,7 @@ export default function NewCampaignPage() {
           <button
             onClick={handleGenerate}
             disabled={!topic.trim() || (selectedContentPlatforms.length === 0 && !selectedAdPlatform)}
-            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-medium transition"
+            className="btn-primary w-full py-3"
           >
             Generate Content & Ads
           </button>
@@ -338,8 +345,11 @@ export default function NewCampaignPage() {
       {/* Step 2: Generating */}
       {step === "generating" && (
         <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-gray-400">Generating content and ads with AI...</p>
+          <div
+            className="w-8 h-8 border-2 rounded-full animate-spin mb-4"
+            style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }}
+          />
+          <p style={{ color: "var(--text-secondary)" }}>Generating content and ads with AI...</p>
         </div>
       )}
 
@@ -347,12 +357,13 @@ export default function NewCampaignPage() {
       {step === "review" && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
               {pieces.length} pieces generated. Approve the ones you want to launch.
             </p>
             <button
               onClick={approveAll}
-              className="text-sm px-3 py-1 rounded bg-green-800 hover:bg-green-700 text-green-200 transition"
+              className="text-sm px-3 py-1 rounded transition"
+              style={{ background: "var(--green-dim)", color: "var(--green)" }}
             >
               Approve All
             </button>
@@ -362,16 +373,17 @@ export default function NewCampaignPage() {
             {pieces.map((piece, i) => (
               <div
                 key={i}
-                className={`bg-gray-900 border rounded-lg p-4 transition ${
-                  piece.approved
-                    ? "border-green-700"
+                className={`card transition${piece.rejected ? " opacity-50" : ""}`}
+                style={{
+                  borderColor: piece.approved
+                    ? "var(--green)"
                     : piece.rejected
-                      ? "border-red-800 opacity-50"
-                      : "border-gray-800"
-                }`}
+                      ? "var(--red)"
+                      : undefined,
+                }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium uppercase text-gray-500">{piece.type}</span>
+                  <span className="label">{piece.type}</span>
                   {piece.type === "content" && (
                     <PlatformIcon platform={(piece.data as ContentResponse).platform} />
                   )}
@@ -380,35 +392,35 @@ export default function NewCampaignPage() {
                 </div>
                 {piece.type === "content" ? (
                   <>
-                    <h4 className="font-medium mb-1">{(piece.data as ContentResponse).title}</h4>
-                    <p className="text-sm text-gray-400 line-clamp-3">
+                    <h4 className="text-base font-semibold mb-1">{(piece.data as ContentResponse).title}</h4>
+                    <p className="text-sm line-clamp-3" style={{ color: "var(--text-tertiary)" }}>
                       {(piece.data as ContentResponse).body}
                     </p>
                   </>
                 ) : (
                   <>
-                    <h4 className="font-medium mb-1">{(piece.data as AdResponse).headline}</h4>
-                    <p className="text-sm text-gray-400">{(piece.data as AdResponse).description}</p>
+                    <h4 className="text-base font-semibold mb-1">{(piece.data as AdResponse).headline}</h4>
+                    <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>{(piece.data as AdResponse).description}</p>
                   </>
                 )}
                 <div className="flex gap-2 mt-3">
                   <button
                     onClick={() => toggleApprove(i)}
-                    className={`text-xs px-3 py-1 rounded transition ${
-                      piece.approved
-                        ? "bg-green-700 text-green-100"
-                        : "bg-green-900 hover:bg-green-800 text-green-200"
-                    }`}
+                    className="text-xs px-3 py-1 rounded transition"
+                    style={{
+                      background: piece.approved ? "var(--green)" : "var(--green-dim)",
+                      color: piece.approved ? "var(--bg)" : "var(--green)",
+                    }}
                   >
                     {piece.approved ? "Approved" : "Approve"}
                   </button>
                   <button
                     onClick={() => toggleReject(i)}
-                    className={`text-xs px-3 py-1 rounded transition ${
-                      piece.rejected
-                        ? "bg-red-700 text-red-100"
-                        : "bg-red-900 hover:bg-red-800 text-red-200"
-                    }`}
+                    className="text-xs px-3 py-1 rounded transition"
+                    style={{
+                      background: piece.rejected ? "var(--red)" : "var(--red-dim)",
+                      color: piece.rejected ? "var(--bg)" : "var(--red)",
+                    }}
                   >
                     {piece.rejected ? "Rejected" : "Reject"}
                   </button>
@@ -420,7 +432,7 @@ export default function NewCampaignPage() {
           <button
             onClick={() => setStep("schedule")}
             disabled={approvedPieces.length === 0}
-            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-medium transition"
+            className="btn-primary w-full py-3"
           >
             Continue with {approvedPieces.length} approved piece{approvedPieces.length !== 1 ? "s" : ""}
           </button>
@@ -432,33 +444,33 @@ export default function NewCampaignPage() {
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-medium mb-2">Schedule & Launch</h3>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
               {approvedPieces.length} piece{approvedPieces.length !== 1 ? "s" : ""} ready to go.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Schedule for (optional)</label>
+            <label className="label block mb-2">Schedule for (optional)</label>
             <input
               type="datetime-local"
               value={scheduleDate}
               onChange={(e) => setScheduleDate(e.target.value)}
-              className="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+              className="rounded-lg px-3 py-2 text-sm"
             />
-            <p className="text-xs text-gray-500 mt-1">Leave empty to save as approved (publish manually later).</p>
+            <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>Leave empty to save as approved (publish manually later).</p>
           </div>
 
           <div className="flex gap-3">
             <button
               onClick={() => setStep("review")}
-              className="px-4 py-2.5 rounded-lg border border-gray-800 text-gray-300 hover:bg-gray-800 transition"
+              className="btn-ghost"
             >
               Back
             </button>
             <button
               onClick={handleLaunch}
               disabled={publishing}
-              className="flex-1 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-medium transition"
+              className="btn-primary flex-1 py-3"
             >
               {publishing ? "Launching..." : "Launch Campaign"}
             </button>

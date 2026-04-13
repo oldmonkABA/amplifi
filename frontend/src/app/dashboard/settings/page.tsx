@@ -14,32 +14,36 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-semibold mb-6">Settings</h2>
+      <h2 className="text-3xl mb-8">Settings</h2>
 
-      <div className="space-y-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-3">Site Configuration</h3>
-          <div className="space-y-3">
+      <div className="space-y-8">
+        <div className="card p-6 rounded-2xl">
+          <h3 className="text-xl font-semibold mb-5">
+            Site Configuration
+          </h3>
+          <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Primary Site URL</label>
+              <label className="label block mb-2">Primary Site URL</label>
               <input
                 type="url"
                 value={siteUrl}
                 onChange={(e) => setSiteUrl(e.target.value)}
-                className="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+                className="w-full"
               />
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-3">AI Provider</h3>
+        <div className="card p-6 rounded-2xl">
+          <h3 className="text-xl font-semibold mb-5">
+            AI Provider
+          </h3>
           <div>
-            <label className="block text-xs text-gray-400 mb-1">LLM Provider</label>
+            <label className="label block mb-2">LLM Provider</label>
             <select
               value={llmProvider}
               onChange={(e) => setLlmProvider(e.target.value)}
-              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm"
+              className="w-full"
             >
               <option value="openai">OpenAI (GPT-4)</option>
               <option value="claude">Anthropic (Claude)</option>
@@ -49,10 +53,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <button
-          onClick={handleSave}
-          className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition"
-        >
+        <button onClick={handleSave} className="btn-primary text-base px-8 py-3">
           {saved ? "Saved!" : "Save Settings"}
         </button>
       </div>

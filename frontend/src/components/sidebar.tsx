@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" },
@@ -14,36 +13,30 @@ const navItems = [
   { label: "Settings", href: "/dashboard/settings", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
 ];
 
-function NavIcon({ d }: { d: string }) {
-  return (
-    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d={d} />
-    </svg>
-  );
-}
-
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sidebar-glow w-[280px] flex flex-col bg-[hsl(228,16%,6%)] border-r border-white/[0.04]">
+    <aside className="w-[260px] flex flex-col border-r surface-sidebar relative overflow-hidden" style={{ borderColor: 'var(--border)' }}>
+      {/* Subtle glow at top */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[150px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(34, 211, 187, 0.06) 0%, transparent 70%)' }} />
+
       {/* Logo */}
-      <div className="px-6 pt-7 pb-8">
-        <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/25 group-hover:shadow-amber-500/40 transition-shadow duration-500">
-            <span className="text-base font-black text-black">A</span>
+      <div className="px-6 pt-6 pb-8 relative z-10">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg" style={{ background: 'var(--accent)', boxShadow: '0 4px 12px var(--accent-glow)' }}>
+            <span className="text-sm font-black" style={{ color: 'var(--bg-primary)' }}>A</span>
           </div>
           <div>
-            <span className="text-xl font-bold tracking-tight text-gradient block leading-tight">Amplifi</span>
-            <span className="text-xs font-semibold text-white/20 tracking-widest uppercase">Marketing AI</span>
+            <span className="text-xl block leading-tight">Amplifi</span>
           </div>
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3">
-        <p className="text-xs font-bold uppercase tracking-[0.15em] text-white/15 px-3 mb-3">Navigation</p>
-        <div className="space-y-1">
+      <nav className="flex-1 px-3 relative z-10">
+        <p className="label px-3 mb-3">Menu</p>
+        <div className="space-y-0.5">
           {navItems.map((item) => {
             const isActive =
               item.href === "/dashboard"
@@ -53,17 +46,24 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-3 rounded-xl text-[15px] font-medium transition-all duration-200 relative",
-                  isActive
-                    ? "nav-active bg-white/[0.05] text-amber-400 ml-1"
-                    : "text-white/35 hover:text-white/60 hover:bg-white/[0.02]",
-                )}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[15px] font-medium transition-all duration-150"
+                style={{
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                  background: isActive ? 'var(--accent-dim)' : 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }
+                }}
               >
-                <NavIcon d={item.icon} />
+                <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                </svg>
                 {item.label}
                 {isActive && (
-                  <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(217,160,40,0.6)]" />
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent)', boxShadow: '0 0 6px var(--accent-glow)' }} />
                 )}
               </Link>
             );
@@ -72,13 +72,15 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-4 pb-5 space-y-3">
-        <div className="rounded-2xl p-4 bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/[0.08]">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-            <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Active Site</p>
+      <div className="px-4 pb-5 relative z-10">
+        <div className="divider mb-4" />
+        <div className="px-2">
+          <p className="label mb-1.5">Active Site</p>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>cautilyacapital.com</p>
+          <div className="flex items-center gap-1.5 mt-1">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--green)', boxShadow: '0 0 6px var(--green)' }} />
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Connected</span>
           </div>
-          <p className="text-sm font-semibold text-white/80 truncate">cautilyacapital.com</p>
         </div>
       </div>
     </aside>
