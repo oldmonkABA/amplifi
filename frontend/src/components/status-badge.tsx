@@ -1,24 +1,27 @@
 import { cn } from "@/lib/utils";
 
-const statusStyles: Record<string, string> = {
-  draft: "bg-gray-700 text-gray-300",
-  approved: "bg-green-900 text-green-300",
-  scheduled: "bg-blue-900 text-blue-300",
-  published: "bg-blue-700 text-blue-100",
-  rejected: "bg-red-900 text-red-300",
-  active: "bg-green-900 text-green-300",
-  paused: "bg-amber-900 text-amber-300",
-  completed: "bg-gray-700 text-gray-300",
+const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
+  draft: { bg: "bg-white/[0.04]", text: "text-white/50", dot: "bg-white/30" },
+  approved: { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+  scheduled: { bg: "bg-blue-500/10", text: "text-blue-400", dot: "bg-blue-400" },
+  published: { bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-400" },
+  rejected: { bg: "bg-red-500/10", text: "text-red-400", dot: "bg-red-400" },
+  active: { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+  paused: { bg: "bg-orange-500/10", text: "text-orange-400", dot: "bg-orange-400" },
+  completed: { bg: "bg-white/[0.04]", text: "text-white/50", dot: "bg-white/30" },
 };
 
 export function StatusBadge({ status }: { status: string }) {
+  const config = statusConfig[status] ?? statusConfig.draft;
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize",
-        statusStyles[status] ?? "bg-gray-700 text-gray-300",
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold capitalize tracking-wide",
+        config.bg,
+        config.text,
       )}
     >
+      <span className={cn("w-1.5 h-1.5 rounded-full", config.dot)} />
       {status}
     </span>
   );

@@ -1,39 +1,39 @@
 const platformLabels: Record<string, string> = {
-  twitter: "TW",
-  linkedin: "LI",
-  reddit: "RD",
-  blog: "BG",
-  medium: "MD",
-  quora: "QA",
-  telegram: "TG",
-  youtube: "YT",
+  twitter: "X",
+  linkedin: "in",
+  reddit: "r/",
+  blog: "Bl",
+  medium: "M",
+  quora: "Q",
+  telegram: "Tg",
+  youtube: "Yt",
   hackernews: "HN",
   producthunt: "PH",
-  email: "EM",
-  google_ads: "GA",
-  facebook_ads: "FB",
+  email: "Em",
+  google_ads: "G",
+  facebook_ads: "f",
 };
 
-const platformColors: Record<string, string> = {
-  twitter: "bg-sky-800",
-  linkedin: "bg-blue-800",
-  reddit: "bg-orange-800",
-  blog: "bg-purple-800",
-  medium: "bg-gray-700",
-  quora: "bg-red-800",
-  telegram: "bg-sky-700",
-  youtube: "bg-red-700",
-  hackernews: "bg-orange-700",
-  producthunt: "bg-orange-600",
-  email: "bg-emerald-800",
-  google_ads: "bg-green-800",
-  facebook_ads: "bg-blue-700",
+const platformGradients: Record<string, string> = {
+  twitter: "from-neutral-700 to-neutral-800",
+  linkedin: "from-blue-600 to-blue-800",
+  reddit: "from-orange-500 to-orange-700",
+  blog: "from-violet-500 to-violet-700",
+  medium: "from-neutral-600 to-neutral-800",
+  quora: "from-red-600 to-red-800",
+  telegram: "from-sky-400 to-sky-600",
+  youtube: "from-red-500 to-red-700",
+  hackernews: "from-orange-400 to-orange-600",
+  producthunt: "from-orange-400 to-red-500",
+  email: "from-emerald-500 to-emerald-700",
+  google_ads: "from-green-500 to-blue-500",
+  facebook_ads: "from-blue-500 to-blue-700",
 };
 
 export function PlatformIcon({ platform }: { platform: string }) {
   return (
     <span
-      className={`inline-flex items-center justify-center w-7 h-7 rounded text-[10px] font-bold ${platformColors[platform] ?? "bg-gray-700"}`}
+      className={`inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br text-[11px] font-black shadow-lg ${platformGradients[platform] ?? "from-gray-600 to-gray-800"}`}
       title={platform}
     >
       {platformLabels[platform] ?? platform.slice(0, 2).toUpperCase()}

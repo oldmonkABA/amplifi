@@ -13,21 +13,22 @@ export function AdCard({
   onReject?: (id: string) => void;
 }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="glass-card rounded-2xl p-5 group hover:scale-[1.01] transition-all duration-300">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-bold uppercase tracking-widest text-white/20">Ad</span>
         <StatusBadge status={ad.status} />
       </div>
-      <h4 className="font-medium mb-1 line-clamp-1">{ad.headline}</h4>
-      <p className="text-sm text-gray-400 line-clamp-2 mb-1">{ad.description}</p>
+      <h4 className="font-bold text-base mb-1.5 line-clamp-1 tracking-tight">{ad.headline}</h4>
+      <p className="text-sm text-white/30 line-clamp-2 mb-1 leading-relaxed">{ad.description}</p>
       {ad.display_url && (
-        <p className="text-xs text-blue-400 mb-3">{ad.display_url}</p>
+        <p className="text-sm text-amber-400/60 mb-4 font-medium">{ad.display_url}</p>
       )}
       {ad.status === "draft" && (onApprove || onReject) && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-3 border-t border-white/[0.04]">
           {onApprove && (
             <button
               onClick={() => onApprove(ad.id)}
-              className="text-xs px-3 py-1 rounded bg-green-800 hover:bg-green-700 text-green-200 transition"
+              className="text-sm px-5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-semibold transition-colors"
             >
               Approve
             </button>
@@ -35,7 +36,7 @@ export function AdCard({
           {onReject && (
             <button
               onClick={() => onReject(ad.id)}
-              className="text-xs px-3 py-1 rounded bg-red-900 hover:bg-red-800 text-red-200 transition"
+              className="text-sm px-5 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold transition-colors"
             >
               Reject
             </button>
